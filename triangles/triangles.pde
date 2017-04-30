@@ -1,50 +1,54 @@
 //libraries
-import java.awt.Frame;
-import java.awt.BorderLayout;
-import processing.sound.*;
 
 //definitions
-AudioIn in;
-Amplitude amp;
-FFT fft;
+final float SPEED = 0.03;
+
+float[] cen = new float[2];
+float[] pts = new float[6];
+float radius;
+float ang;
 
 //setup
 void setup() {
-  size(1024, 512);
+  size(640, 360);
   background(255);
   
-  // create the input stream
-  in = new AudioIn(this, 0);
-  //amp = new Amplitude(this);
-  fft = new FFT(this, bands);
+  cen[0] = width/2;
+  cen[1] = height/2;
+  radius = cen[1]/2;
   
-  in.start(); // possibly use to delay output and allow more processing time
-  //in.play();
-  //amp.input(in);
-  fft.input(in);
   strokeWeight(2);
 }
-
-int bands = 512;
-float[] spectrum = new float[bands];
 
 //main
 void draw() {
   background(255);
+  stroke(0,0,0);
+  ellipse(cen[0], cen[1], radius, radius);
   
-  //println(amp.analyze());
-  //fft.input(in);
-  fft.analyze(spectrum);
-
-  for(int i = 0; i < bands; i++){
-    // The result of the FFT is normalized
-    // draw the line for frequency band i scaling it up by 5 to get more amplitude.
-    stroke(abs(255-(i+millis()/10)%bands),i/2,255);
-    line( i*2, (height-spectrum[i]*height*100)/2, i*2, height - (height-spectrum[i]*height*100)/2 );
+  ang = ((millis()*SPEED)%360) * TWO_PI/360;
+  
+  for(int i = 0; i < pts.length/2; i++){
+    pts[i*2] = radius * cos(ang + i*TWO_PI/3) + cen[0];
+    pts[i*2+1] = radius * sin(ang + i*TWO_PI/3) + cen[1];
   }
+  
+  drawTriangle(pts);
 }
 
 //methods
+void drawTriangle(float[] p) {
+  stroke(0,255,255);
+  line(p[0], p[1],p[2], p[3]);
+  
+  stroke(255,0,255);
+  line(p[2], p[3], p[4], p[5]);
+  
+  stroke(255,255,0);
+  line(p[4], p[5], p[0], p[1]);
+}  
+
+
 // get gui settings from settings file :: JSON method, read from config file
 //String getPlotterConfigString(String id) {
 //  String r = "";

@@ -1,6 +1,4 @@
 //libraries
-import java.awt.Frame;
-import java.awt.BorderLayout;
 import processing.sound.*;
 
 //definitions
